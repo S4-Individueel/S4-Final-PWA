@@ -70,20 +70,13 @@ export default function Home() {
 	const callApi = async (input: string) => {
 		setLoading(true);
 
-		const myMessage: MessageProps = {
-			text: input,
-			key: new Date().getTime()
-		}
-
-		setMessages([...messagesRef.current, myMessage]);
-
 		const response = await fetch("/api/generate-answer", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
 			},
 			body: JSON.stringify({
-				prompt: input
+				prompt: `Give me recommendations for when im visiting ${input}`
 			})
 		}).then((response) => response.json())
 		setLoading(false)
