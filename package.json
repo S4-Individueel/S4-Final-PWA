@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "leaflet": "^1.9.3",
+    "leaflet-geosearch": "^3.7.0",
+    "openai": "^3.2.1",
+    "react-leaflet": "^4.2.1",
+    "react-usestateref": "^1.0.8"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.3"
+  }
+}
