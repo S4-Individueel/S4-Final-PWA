@@ -87,8 +87,6 @@ export default function Home() {
 				key: new Date().getTime()
 			};
 			setMessages([...messagesRef.current, botMessage])
-		} else {
-
 		}
 	}
 
@@ -110,7 +108,7 @@ export default function Home() {
 							<p>{msg.text}</p>
 						</div>
 					))}
-					{messages.length == 0 && <p className="text-center text-gray-400">At your service!</p> }
+					{messages.length == 0 && <p>At your service!</p> }
 				</div>
 			</div>
 		</>

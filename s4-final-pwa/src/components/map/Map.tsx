@@ -39,7 +39,7 @@ export default function Map({ center, zoom }: PropTypes) {
 			<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 			{location && (
 				<Marker position={location}>
-					<Popup>{location}</Popup>
+					<Popup>{location.toString()}</Popup>
 				</Marker>
 			)}
 		</MapContainer>
