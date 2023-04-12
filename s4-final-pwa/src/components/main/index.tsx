@@ -5,9 +5,11 @@ import Head from "next/head";
 import styles from "@/styles/Home.module.css"
 import {OpenStreetMapProvider} from "leaflet-geosearch";
 import {LatLng} from "leaflet";
+import ChangeView from "@/components/ChangeView";
+import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 
 
-const Map = dynamic(() => import("../map/Map"), { ssr: false });
+// const Map = dynamic(() => import("../map/Map"), { ssr: false });
 
 interface MessageProps {
     text: string,
@@ -48,6 +50,38 @@ const ChatInput = ({onSend, disabled}: InputProps) => {
     )
 }
 
+interface PropTypes {
+    center: location;
+    zoom: number;
+}
+
+const Map = ({ center, zoom }: PropTypes) => {
+    const newCenter = new LatLng(center.latitude, center.longitude);
+    const [location, setLocation] = useState<LatLng | null>(newCenter);
+
+    useEffect(() => {
+        setLocation(newCenter)
+    }, [center])
+
+
+    return (
+        <MapContainer
+            className={styles.map}
+            center={location}
+            zoom={zoom}
+            scrollWheelZoom={true}
+        >
+            <ChangeView center={{ latitude: Number(location?.lat), longitude: Number(location?.lng) }} />
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {location && (
+                <Marker position={location}>
+                    <Popup>{location.toString()}</Popup>
+                </Marker>
+            )}
+        </MapContainer>
+    );
+}
+
 export default function Home() {
     const [messages, setMessages] = useState<MessageProps[]>([]);
     const messagesRef = useRef<MessageProps[]>([]);
@@ -68,7 +102,7 @@ export default function Home() {
                 });
             }
         }
-    })
+    }, [])
 
     const callApi = async (input: string) => {
         setLoading(true);
@@ -79,7 +113,7 @@ export default function Home() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                prompt: `Give me recommendations for when im visiting ${input}`
+                prompt: `Give me recommendations for when im visiting ${locationName}`
             })
         }).then((response) => response.json())
         setLoading(false)
@@ -100,7 +134,9 @@ export default function Home() {
             </Head>
             <div className={styles.container}>
                 <div className={styles.map}>
-                    <Map center={location!} zoom={13} />
+                    {
+                        location && <Map center={location!} zoom={13} />
+                    }
                     <ChatInput onSend={(input) => {
                         const provider = new OpenStreetMapProvider();
                         provider.search({ query: input }).then((results) => {
@@ -119,7 +155,6 @@ export default function Home() {
                 </div>
                 <div className={styles.chat}>
                     <h2>AI recommendations</h2>
-
                     {messages.map((msg: MessageProps) => (
                         <div key={msg.key} className={styles.chatBubble}>
                             <p>{msg.text}</p>
