@@ -10,23 +10,13 @@ interface PropTypes {
 	zoom: number;
 }
 
-export default function Map({ center, zoom }: PropTypes) {
+function Map({ center, zoom }: PropTypes) {
 	const newCenter = new LatLng(center.latitude, center.longitude);
 	const [location, setLocation] = useState<LatLng | null>(newCenter);
 
-	const handleKeyDown = (e: any) => {
-		if (e.key === "Enter") {
-			const provider = new OpenStreetMapProvider();
-			provider.search({ query: e.target.value }).then((results) => {
-				if (results.length !== 0) {
-					const search = new LatLng(results[0].y, results[0].x);
-					setLocation(search);
-				}
-			});
-		}
-	};
-
-
+	useEffect(() => {
+		console.log(location)
+	})
 
 	return (
 		<MapContainer
