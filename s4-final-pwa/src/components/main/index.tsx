@@ -148,7 +148,12 @@ export default function Home() {
                                     longitude: search.lng
                                 });
 
-                                // callApi(locationName)
+                                callApi(locationName).then(() => {
+                                    return
+                                })
+                            }
+                            else {
+                                alert("Location not found")
                             }
                         });
                     }} disabled={loading} />
