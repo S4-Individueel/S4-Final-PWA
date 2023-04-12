@@ -1,5 +1,4 @@
 'use client';
-import dynamic from "next/dynamic";
 import {useEffect, useRef, useState} from "react";
 import Head from "next/head";
 import styles from "@/styles/Home.module.css"
@@ -7,9 +6,6 @@ import {OpenStreetMapProvider} from "leaflet-geosearch";
 import {LatLng} from "leaflet";
 import ChangeView from "@/components/ChangeView";
 import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
-
-
-// const Map = dynamic(() => import("../map/Map"), { ssr: false });
 
 interface MessageProps {
     text: string,
@@ -67,7 +63,7 @@ const Map = ({ center, zoom }: PropTypes) => {
     return (
         <MapContainer
             className={styles.map}
-            center={location}
+            center={location!}
             zoom={zoom}
             scrollWheelZoom={true}
         >
@@ -104,7 +100,7 @@ export default function Home() {
         }
     }, [])
 
-    const callApi = async (input: string) => {
+    const callApi = async () => {
         setLoading(true);
 
         const response = await fetch("/api/generate-answer", {
@@ -148,7 +144,7 @@ export default function Home() {
                                     longitude: search.lng
                                 });
 
-                                callApi(locationName).then(() => {
+                                callApi().then(() => {
                                     return
                                 })
                             }
