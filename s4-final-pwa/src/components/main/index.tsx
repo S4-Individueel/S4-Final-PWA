@@ -120,7 +120,7 @@ export default function Home() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                prompt: `Give me a list of 3 recommendations for when im visiting ${locationName}`
+                prompt: `Give me a list of 3 recommendations for when im visiting ${locationName}. Give me this list with bullet points •.`
             })
         }).then((response) => response.json())
         setLoading(false)
@@ -171,7 +171,9 @@ export default function Home() {
                     {messages.slice(0).reverse().map((msg: MessageProps) => (
                         <div key={msg.key} className={styles.chatBubble}>
                             <h2>{msg.location}</h2>
-                            <p>{msg.text}</p>
+                            {msg.text.split("•").slice(1).map((m: string, index: number) => (
+                                <li key={index} style={{marginBottom: "10px"}}>{m}</li>
+                            ))}
                         </div>
                     ))}
                 </div>
