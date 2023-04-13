@@ -6,8 +6,10 @@ import {OpenStreetMapProvider} from "leaflet-geosearch";
 import {LatLng} from "leaflet";
 import ChangeView from "@/components/ChangeView";
 import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
+import classNames from "classnames";
 
 interface MessageProps {
+    location: string
     text: string,
     key: number
 }
@@ -84,6 +86,7 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const [location, setLocation] = useState<location>();
     const [locationName, setLocationName] = useState<string>("");
+    const [open, setOpen] = useState(false)
 
     useEffect(() => {
         messagesRef.current = messages;
@@ -100,6 +103,14 @@ export default function Home() {
         }
     }, [])
 
+    useEffect(() => {
+        if (locationName != "") {
+            callApi().then(() => {
+                return
+            })
+        }
+    }, [locationName])
+
     const callApi = async () => {
         setLoading(true);
 
@@ -109,13 +120,14 @@ export default function Home() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                prompt: `Give me recommendations for when im visiting ${locationName}`
+                prompt: `Give me a list of 3 recommendations for when im visiting ${locationName}`
             })
         }).then((response) => response.json())
         setLoading(false)
 
         if (response.text)  {
             const botMessage: MessageProps = {
+                location: locationName,
                 text: response.text,
                 key: new Date().getTime()
             };
@@ -143,10 +155,6 @@ export default function Home() {
                                     latitude: search.lat,
                                     longitude: search.lng
                                 });
-
-                                callApi().then(() => {
-                                    return
-                                })
                             }
                             else {
                                 alert("Location not found")
@@ -154,14 +162,28 @@ export default function Home() {
                         });
                     }} disabled={loading} />
                 </div>
-                <div className={styles.chat}>
+                <div className={classNames(styles.chat, open && styles.open)}>
                     <h2>AI recommendations</h2>
-                    {messages.map((msg: MessageProps) => (
+                    {messages.length == 0 && <p>At your service!</p> }
+                    {
+                        loading && <img className={styles.loading} src="/loading-gif.gif" alt="Loading gif"/>
+                    }
+                    {messages.slice(0).reverse().map((msg: MessageProps) => (
                         <div key={msg.key} className={styles.chatBubble}>
+                            <h2>{msg.location}</h2>
                             <p>{msg.text}</p>
                         </div>
                     ))}
-                    {messages.length == 0 && <p>At your service!</p> }
+                </div>
+
+                <div className={styles.bubble} onClick={() => {
+                    if (!open) {
+                        setOpen(true)
+                    } else {
+                        setOpen(false)
+                    }
+                }}>
+                    <img className={styles.icon} src="/chat.svg" alt="Chat icon"/>
                 </div>
             </div>
         </>
